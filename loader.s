@@ -15,7 +15,7 @@ align 4
     dd FLAGS
     dd CHECKSUM
 
-.loader:
+loader:
     mov eax, 0xCAFEBABE
 .loop:
     jmp .loop
