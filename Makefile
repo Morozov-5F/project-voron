@@ -2,7 +2,7 @@
 # All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
-PHONY: kernel clean fullclean iso iso_dir
+.PHONY: kernel clean fullclean iso iso_dir
 
 AS = nasm
 ASFLAGS = -f elf32
@@ -14,33 +14,25 @@ CC = gcc
 CFLAGS = -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -Wall -Wextra -Werror -c
 
 ISODIR=/tmp/voron-os-iso
+KERNEL_FILE = kernel/kernel.elf
 
-kernel.elf: loader.o kmain.o
-	@echo "Linking kernel"
-	@echo "  LD $^ $@"
-	@$(LD) $(LDFLAGS) $^ -o $@
+all: iso
 
-kernel: kernel.elf
+$(KERNEL_FILE):
+	@echo "Compiling kernel"
+	@$(MAKE) -C kernel kernel
 
-iso: kernel
+iso: $(KERNEL_FILE)
 	@echo "Making ISO image"
 	@$(RM) -rf $(ISODIR) && mkdir -p $(ISODIR)  
-	@cp -rf boot/ $(ISODIR) && cp kernel.elf $(ISODIR)/boot
+	@cp -rf boot/ $(ISODIR) && cp $(KERNEL_FILE) $(ISODIR)/boot
 	@grub-mkrescue -o os.iso $(ISODIR)
 
-%.o: %.s
-	@echo "  AS $< $@"
-	@$(AS) $(ASFLAGS) $< -o $@
-
-%.o: %.c
-	@echo "  CC $< $@"
-	@$(CC) $(CFLAGS) $< -o $@
-
 clean:
-	@echo "Cleaning object files"
-	@$(RM) *.o
+	@$(MAKE) -C kernel clean
 
 fullclean: clean
-	@echo "Cleaning kernel image and ISO"
-	@$(RM) kernel.elf
+	@$(MAKE) -C kernel fullclean
+	@echo "Cleaning ISO"
+	@$(RM) -r $(ISODIR)
 	@$(RM) os.iso
