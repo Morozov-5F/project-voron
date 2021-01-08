@@ -11,9 +11,9 @@ LD = ld
 LDFLAGS = -T kernel.ld -melf_i386
 
 CC = gcc
-CFLAGS = -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -Wall -Wextra -Werror -c
+CFLAGS = -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -Wall -Wextra -Werror -c -I include
 
-kernel.elf: src/loader.o src/kmain.o
+kernel.elf: src/loader.o src/kmain.o src/io/vrn_framebuffer.o
 	@echo "Linking kernel"
 	@echo "  LD $^ $@"
 	@$(LD) $(LDFLAGS) $^ -o $@

@@ -5,15 +5,4 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <io/vrn_framebuffer.h>
-
-int kmain(void)
-{
-    vrn_fb_write_string("Hello, world", 0, 7);
-
-    while (1)
-    {
-
-    }
-    return 0;
-}
+void vrn_fb_write_string(const char *str, unsigned char fg, unsigned char bg);
