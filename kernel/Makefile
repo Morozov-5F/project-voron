@@ -13,7 +13,7 @@ LDFLAGS = -T kernel.ld -melf_i386
 CC = gcc
 CFLAGS = -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -Wall -Wextra -Werror -c -I include
 
-kernel.elf: src/loader.o src/kmain.o src/io/vrn_framebuffer.o
+kernel.elf: src/loader.o src/kmain.o src/io/vrn_framebuffer.o src/io/vrn_outb.o
 	@echo "Linking kernel"
 	@echo "  LD $^ $@"
 	@$(LD) $(LDFLAGS) $^ -o $@
@@ -32,6 +32,7 @@ clean:
 	@echo "Cleaning object files"
 	@$(RM) *.o
 	@$(RM) src/*.o
+	@$(RM) src/io/*.o
 
 fullclean: clean
 	@echo "Cleaning kernel image and ISO"

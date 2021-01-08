@@ -9,7 +9,11 @@
 
 int kmain(void)
 {
-    vrn_fb_write_string("Hello, world", 0, 7);
+    vrn_fb_clear();
+    
+    vrn_fb_puts("Voron OS\n", VRN_FB_COLOUR_BLACK, VRN_FB_COLOUR_LGRAY);
+    vrn_fb_puts("\tBoot sequence complete.\n", VRN_FB_COLOUR_BLACK, VRN_FB_COLOUR_LGREEN);
+    vrn_fb_puts("\tOS does nothing so far.\n", VRN_FB_COLOUR_BLACK, VRN_FB_COLOUR_LGRAY);
 
     while (1)
     {

@@ -7,12 +7,71 @@
 
 #include <io/vrn_framebuffer.h>
 
-void vrn_fb_write_string(const char *str, unsigned char fg, unsigned char bg)
+#define VRN_FB_MAX_ROWS    ((char)80)
+#define VRN_FB_MAX_COLUMNS ((char)25)
+
+static char *gs_vrn_framebuffer = (char *)0xB8000;
+static char gs_cursor_x = 0;
+static char gs_cursor_y = 0;
+
+void vrn_fb_putc(char c, vrn_fb_colour_t fg, vrn_fb_colour_t bg)
 {
-    char *fb = (char *)0xB8000;
+    char attribute = ((fg & 0x0f) << 4) | (bg & 0x0f);
+
+    if (c == '\r')
+    {
+        gs_cursor_x = 0;
+    }
+    else if (c == '\n')
+    {
+        gs_cursor_x = 0;
+        gs_cursor_y = (gs_cursor_y + 1) % VRN_FB_MAX_COLUMNS; // For now the framebuffer wraps up;
+    }
+    else if (c == '\t')
+    {
+        gs_cursor_x = (gs_cursor_x + 4) & ~(4 - 1);
+    }
+    else if (c >= ' ')
+    {
+        char *location = gs_vrn_framebuffer + 2 * (gs_cursor_y * VRN_FB_MAX_ROWS + gs_cursor_x);
+        location[0] = c;
+        location[1] = attribute;
+
+        gs_cursor_x++;
+    }
+
+    if (gs_cursor_x >= VRN_FB_MAX_ROWS)
+    {
+        gs_cursor_x = 0;
+        gs_cursor_y = (gs_cursor_y + 1) % VRN_FB_MAX_COLUMNS;
+    }
+
+    vrn_fb_move_cursor(gs_cursor_y * VRN_FB_MAX_ROWS + gs_cursor_x);
+}
+
+void vrn_fb_puts(const char *str, vrn_fb_colour_t fg, vrn_fb_colour_t bg)
+{
     for (int i = 0; str[i] != '\0'; ++i)
     {
-        fb[2 * i] = str[i];
-        fb[2 * i + 1] = ((fg & 0x0f) << 4) | (bg & 0x0f);
+        vrn_fb_putc(str[i], fg, bg);
     }
+}
+
+void vrn_fb_move_cursor(unsigned short position)
+{
+    vrn_outb(0x3D4, 14);
+    vrn_outb(0x3D5, ((position >> 8) & 0xFF));
+    vrn_outb(0x3D4, 15);
+    vrn_outb(0x3D5, position & 0xFF);
+}
+
+void vrn_fb_clear(void)
+{
+    for (int i = 0; i < VRN_FB_MAX_ROWS * VRN_FB_MAX_COLUMNS; ++i)
+    {
+        vrn_fb_putc(' ', VRN_FB_COLOUR_BLACK, VRN_FB_COLOUR_WHITE);
+    }
+    gs_cursor_x = 0;
+    gs_cursor_y = 0;
+    vrn_fb_move_cursor(gs_cursor_y * VRN_FB_MAX_ROWS + gs_cursor_x);
 }
