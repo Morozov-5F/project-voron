@@ -6,19 +6,19 @@ PHONY: kernel clean fullclean iso iso_dir
 
 AS = nasm
 ASFLAGS = -f elf32
+
 LD = ld
+LDFLAGS = -T kernel.ld -melf_i386
+
+CC = gcc
+CFLAGS = -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -Wall -Wextra -Werror -c
 
 ISODIR=/tmp/voron-os-iso
 
-# Compile assembly files
-%.o: %.s
-	@echo "  AS $< $@"
-	@$(AS) -f elf32 $<
-
-kernel.elf: loader.o
+kernel.elf: loader.o kmain.o
 	@echo "Linking kernel"
-	@echo "  LD $< $@"
-	@$(LD) -T kernel.ld -melf_i386 $< -o $@
+	@echo "  LD $^ $@"
+	@$(LD) $(LDFLAGS) $^ -o $@
 
 kernel: kernel.elf
 
@@ -27,6 +27,14 @@ iso: kernel
 	@$(RM) -rf $(ISODIR) && mkdir -p $(ISODIR)  
 	@cp -rf boot/ $(ISODIR) && cp kernel.elf $(ISODIR)/boot
 	@grub-mkrescue -o os.iso $(ISODIR)
+
+%.o: %.s
+	@echo "  AS $< $@"
+	@$(AS) $(ASFLAGS) $< -o $@
+
+%.o: %.c
+	@echo "  CC $< $@"
+	@$(CC) $(CFLAGS) $< -o $@
 
 clean:
 	@echo "Cleaning object files"
