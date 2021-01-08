@@ -56,3 +56,6 @@ bochslog.txt
 
 # macOS files
 .DS_Store
+
+# OS ISO images
+*.iso
