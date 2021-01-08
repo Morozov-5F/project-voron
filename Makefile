@@ -28,6 +28,9 @@ iso: $(KERNEL_FILE)
 	@cp -rf boot/ $(ISODIR) && cp $(KERNEL_FILE) $(ISODIR)/boot
 	@grub-mkrescue -o os.iso $(ISODIR)
 
+emulate:
+	@bochs -f bochsrc.txt -rc bochsinit.txt -q
+
 clean:
 	@$(MAKE) -C kernel clean
 
@@ -36,3 +39,4 @@ fullclean: clean
 	@echo "Cleaning ISO"
 	@$(RM) -r $(ISODIR)
 	@$(RM) os.iso
+	@$(RM) bochslog.txt
