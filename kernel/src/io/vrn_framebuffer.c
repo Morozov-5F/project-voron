@@ -69,10 +69,10 @@ void vrn_fb_puts(const char *str, vrn_fb_colour_t fg, vrn_fb_colour_t bg)
 
 void vrn_fb_move_cursor(unsigned short position)
 {
-    vrn_outb(0x3D4, 14);
-    vrn_outb(0x3D5, ((position >> 8) & 0xFF));
-    vrn_outb(0x3D4, 15);
-    vrn_outb(0x3D5, position & 0xFF);
+    vrn_io_outb(0x3D4, 14);
+    vrn_io_outb(0x3D5, ((position >> 8) & 0xFF));
+    vrn_io_outb(0x3D4, 15);
+    vrn_io_outb(0x3D5, position & 0xFF);
 }
 
 void vrn_fb_clear(void)

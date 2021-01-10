@@ -5,6 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#ifndef VRN_IO_FB
+#define VRN_IO_FB
+
+#include <io/vrn_io.h>
+
 typedef enum vrn_fb_colour_e
 {
     VRN_FB_COLOUR_BLACK = (unsigned char)0,
@@ -25,8 +30,6 @@ typedef enum vrn_fb_colour_e
     VRN_FB_COLOUR_WHITE = (unsigned char)15,
 } vrn_fb_colour_t;
 
-extern void vrn_outb(unsigned short port, unsigned char data);
-
 void vrn_fb_putc(char c, vrn_fb_colour_t fg, vrn_fb_colour_t bg);
 
 void vrn_fb_puts(const char *str, vrn_fb_colour_t fg, vrn_fb_colour_t bg);
@@ -36,3 +39,5 @@ void vrn_fb_move_cursor(unsigned short position);
 void vrn_fb_clear(void);
 
 void vrn_fb_printf(const char *fmt, ...) __attribute__ ((format (printf, 1, 2)));
+
+#endif // VRN_IO_FB
