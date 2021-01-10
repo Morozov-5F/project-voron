@@ -5,11 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef VRN_IO_H
-#define VRN_IO_H
+#ifndef VORON_STDIO_H
+#define VORON_STDIO_H
 
-extern void vrn_io_outb(unsigned short port, unsigned char data);
+#include <stdarg.h>
 
-extern unsigned char vrn_io_inb(unsigned short port);
+int vsprintf(char *s, const char *format, va_list arg);
 
-#endif //VORON_VRN_IO_H
+#endif //VORON_STDIO_H
