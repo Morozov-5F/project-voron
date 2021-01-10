@@ -34,3 +34,5 @@ void vrn_fb_puts(const char *str, vrn_fb_colour_t fg, vrn_fb_colour_t bg);
 void vrn_fb_move_cursor(unsigned short position);
 
 void vrn_fb_clear(void);
+
+void vrn_fb_printf(const char *fmt, ...);
