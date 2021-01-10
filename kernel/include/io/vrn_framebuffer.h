@@ -35,4 +35,4 @@ void vrn_fb_move_cursor(unsigned short position);
 
 void vrn_fb_clear(void);
 
-void vrn_fb_printf(const char *fmt, ...);
+void vrn_fb_printf(const char *fmt, ...) __attribute__ ((format (printf, 1, 2)));

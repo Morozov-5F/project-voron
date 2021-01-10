@@ -6,6 +6,7 @@
  */
 #include <stdarg.h>
 #include <io/vrn_framebuffer.h>
+#include <stdint.h>
 
 #define VRN_FB_MAX_ROWS    ((char)80)
 #define VRN_FB_MAX_COLUMNS ((char)25)
@@ -113,30 +114,43 @@ static int vsprintf(char *s, const char *format, va_list arg)
 
         if (escape_detected)
         {
-            if (format[i] == '%')
+            switch (format[i])
             {
-                s[k++] = '%';
-            }
-            else if (format[i] == 's') // String format
-            {
-                char *str_arg = va_arg(arg, char *);
-                for (int j = 0; str_arg[j] != '\0'; ++j)
+                case '%':
+                    s[k++] = '%';
+                    break;
+                case 'c':
+                    s[k++] = va_arg(arg, int);
+                    break;
+                case 's':
                 {
-                    s[k++] = str_arg[j];
+                    char *str_arg = va_arg(arg, char *);
+                    for (int j = 0; str_arg[j] != '\0'; ++j)
+                    {
+                        s[k++] = str_arg[j];
+                    }
+                    break;
                 }
+                case 'd':
+                case 'i':
+                    k += int_to_string(va_arg(arg, int), s + k, 10, VRN_FB_ITS_FLAG_NONE);
+                    break;
+                case 'o':
+                    k += int_to_string(va_arg(arg, int), s + k, 8, VRN_FB_ITS_FLAG_NONE);
+                    break;
+                case 'x':
+                    k += int_to_string(va_arg(arg, int), s + k, 16, VRN_FB_ITS_FLAG_SMALL);
+                    break;
+                case 'X':
+                    k += int_to_string(va_arg(arg, int), s + k, 16, VRN_FB_ITS_FLAG_NONE);
+                    break;
+                case 'p':
+                    k += int_to_string(va_arg(arg, intptr_t), s + k, 16, VRN_FB_ITS_FLAG_NONE);
+                    break;
+                default:
+                    break;
             }
-            else if (format[i] == 'd') // Decimal integer
-            {
-                k += int_to_string(va_arg(arg, int), s + k, 10, VRN_FB_ITS_FLAG_NONE);
-            }
-            else if (format[i] == 'x') // Hexadecimal integer (small)
-            {
-                k += int_to_string(va_arg(arg, int), s + k, 16, VRN_FB_ITS_FLAG_SMALL);
-            }
-            else if (format[i] == 'X') // Hexadecimal integer
-            {
-                k += int_to_string(va_arg(arg, int), s + k, 16, VRN_FB_ITS_FLAG_NONE);
-            }
+
             escape_detected = 0;
             continue;
         }

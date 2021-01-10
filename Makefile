@@ -4,15 +4,6 @@
 # LICENSE file in the root directory of this source tree.
 .PHONY: kernel clean fullclean iso iso_dir kernel/kernel.elf
 
-AS = nasm
-ASFLAGS = -f elf32
-
-LD = ld
-LDFLAGS = -T kernel.ld -melf_i386
-
-CC = gcc
-CFLAGS = -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -Wall -Wextra -Werror -c
-
 ISODIR=/tmp/voron-os-iso
 KERNEL_FILE = kernel/kernel.elf
 

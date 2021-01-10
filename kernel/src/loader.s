@@ -30,4 +30,4 @@ loader:
     call kmain
     
     mov ebx, 0xDEADBEEF ; Set a special value to the register indicating that kmain is stopped working
-    jmp $               ; Loop forver if our kmain exits for some reason
+    jmp $               ; Loop forever if our kmain exits for some reason
